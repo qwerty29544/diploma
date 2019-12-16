@@ -1,4 +1,7 @@
+# Проверка наличия пакета plotrix/ Если нет, то загрузка пакета 
+if ("plotrix" %in% rownames(installed.packages()) == FALSE) {install.packages("plotrix")}
 library(plotrix)
+
 # Functions init ----------------------------------------------------------
 
 
