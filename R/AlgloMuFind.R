@@ -1,7 +1,3 @@
-# Проверка наличия пакета plotrix/ Если нет, то загрузка пакета 
-if ("plotrix" %in% rownames(installed.packages()) == FALSE) {install.packages("plotrix")}
-library(plotrix)
-
 # Functions init ----------------------------------------------------------
 
 
@@ -85,7 +81,7 @@ FlagsCalc <- function(mu, R, n, lambs) {
 # section of initialization complex numbers -------------------------------
 
 # Считывание данных о точках многоугольника из текстового документа
-lambs <- read.table(file = "Docs/complexNumbeRS", header = T)[[1]]
+lambs <- read.table(file = "inputs/complexNumbeRS", header = T)[[1]]
 cat(lambs) # Вывод считанных данных в консоль как есть
 n <- length(lambs) # Переменная количества считанных данных
 
@@ -140,7 +136,7 @@ if (flash & n == 2) {
     results <- c(mu, R, sqrt(R^2 / abs(mu)^2))
     names(results) <- c("Center:", "Radius:", "Ro:")
     print(results)
-    write.table(x = results, file = "Docs/results.txt", quote = FALSE)
+    write.table(x = results, file = "outputs/results.txt", quote = FALSE)
 } else if (flash & n > 2) {
     Number_of_Radius <- which(1 == apply(Flags, 1, prod))
     results <- matrix(nrow = length(Number_of_Radius), ncol = 3)
@@ -152,32 +148,13 @@ if (flash & n == 2) {
     results <- results[Number_of_Radius, ]
     names(results) <- c("Center:", "Radius:", "Ro:")
     print(results)
-    write.table(x = results, file = "Docs/results.txt", quote = FALSE)
+    write.table(x = results, file = "outputs/results.txt", quote = FALSE)
 } else {
     results <- "Center of Decart plot belongs to area of linear operator's spectre"
-    write.table(x = results, file = "Docs/results.txt", quote = FALSE)
+    write.table(x = results, file = "outputs/results.txt", quote = FALSE)
 }
 
 
-# Отрисовка результатов вычислений для спектра линейного оператора
-jpeg("Docs/complexPlot.jpg")
-plot(x = c(Re(lambs), Re(results["Center:"])), 
-     y = c(Im(lambs), Im(results["Center:"])),
-     xlim = c(Re(results["Center:"]) - Re(results["Radius:"]) - 1, Re(results["Center:"]) + Re(results["Radius:"]) + 1),
-     ylim = c(Im(results["Center:"]) - Re(results["Radius:"]) - 1, Im(results["Center:"]) + Re(results["Radius:"]) + 1),
-     main = "Спектр на комплексной плоскости линейного оператора")
-lines(x = Re(lambs), 
-      y = Im(lambs), 
-      type = "l")
-lines(x = c(Re(lambs[1]), Re(lambs[n])),
-      y = c(Im(lambs[1]), Im(lambs[n])))
-abline(h = 0, lty = 1)
-abline(v = 0, lty = 1)
-# Функция из библиотеки 'plotrix' для рисования окружности с центром и радиусом
-draw.circle(x = Re(results["Center:"]), y = Im(results["Center:"]), radius = Re(results["Radius:"]), border = "red")
-grid()
-dev.off()
-
 # Очистка памяти проекта
-rm(list = ls())
+#rm(list = ls())
 
