@@ -1,8 +1,9 @@
+library(plotrix)
 # Functions init ----------------------------------------------------------
 
 
-#' Title считает центр окружности по двум комплексным точкам спектра
-#'
+#' Title Данная функция возвращает результат вычисления центра окружности на комплексной плоскости для спектральной области линейного оператора
+#' 
 #' @param z1 is the first labmda of linear operator's Eigenvector 
 #' @param z2 is the second labmda of linear operator's Eigenvector
 #'
@@ -54,14 +55,15 @@ Rcalc3 <- function(MU, z) {
     return(sqrt(abs(MU - z)^2))
 }
 
-#' Title
+#' Title Данная функция реализует матрицу проверок для сочетаний центр многоугольника - точки многоугольника
+#' Матрица проверок позволяет векторизовать процедуру проверки самого оптимального из предложенных центров окружности вокруг многоугольника. На основе генерации матрицы булевых значений, мы в строчках записываем мне сопоставления радиуса окружности с разностями межу центром окружности и крайними точками многоугольника.
 #'
-#' @param mu 
-#' @param R 
-#' @param n 
-#' @param lambs 
+#' @param mu - центры окружностей, созданных треугольниками или отрезками внутри многоугольника
+#' @param R - радиусы данных окружностей, которые создаются при помощи треугольков или отрезков многоугольника из mu
+#' @param n - количество входных крайних точек спектральной области - создают многоугольник на комплексной плоскости
+#' @param lambs - крайние точки спектра линейного оператора, создающие многоугольник на комплексной плоскости, для которого происходит поиск центра окружности и радиуса минимально возможного размера.
 #'
-#' @return
+#' @return Flags  - 
 #' @export
 #'
 #' @examples
@@ -79,20 +81,18 @@ FlagsCalc <- function(mu, R, n, lambs) {
 
 # section of initialization complex numbers -------------------------------
 
-# read lambds from txt file for now
+# Считывание данных о точках многоугольника из текстового документа
 lambs <- read.table(file = "Docs/complexNumbeRS", header = T)[[1]]
-cat(lambs)
-# how lambds do we have
-n <- length(lambs)
+cat(lambs) # Вывод считанных данных в консоль как есть
+n <- length(lambs) # Переменная количества считанных данных
 
 # section of init z1, z2, z3 ----------------------------------------------
 
-flash <- FALSE
+flash <- FALSE # Логическая переменная для обозначения разрешения записи в текстовый файл
 
-# check length of vector for algorithm
+# Конструкция if (...) {..} else if (...) {..} для проверки сложности алгоритма 
 if (n == 2) {
     
-    # if length == 2, then we have option number 1, and 1 mu value in scope
     # Если точки всего две, то определеяем центр окружности и радуис по первым формулам
     Z1 <- lambs[1] # Считали как первую точку в алгоритм
     Z2 <- lambs[2] # Считали как вторую точку в алгоритм
@@ -105,8 +105,8 @@ if (n == 2) {
 } else if (n > 2) {
     
     # Если точек три и больше, то считаем как по первым так и по вторым формулам
-    U <- combn(1:n, m = 2)
-    Z1 <- lambs[U[1,]]
+    U <- combn(1:n, m = 2) # comdn() составляет из вектора все возможные комбинации по m членов
+    Z1 <- lambs[U[1,]] # 
     Z2 <- lambs[U[2,]]
     mu <- mucalc2(Z1, Z2)
     R <- Rcalc2(Z1, Z2)
@@ -132,12 +132,13 @@ if (n == 2) {
 
 # write results into txt --------------------------------------------------
 
+# Условный оператор для вывода результата в файл
 if (flash & n == 2) {
     results <- c(mu, R, sqrt(R^2 / abs(mu)^2))
     names(results) <- c("Center:", "Radius:", "Ro:")
     print(results)
     write.table(x = results, file = "Docs/results.txt", quote = FALSE)
-} else if (flash & n > 2){
+} else if (flash & n > 2) {
     Number_of_Radius <- which(1 == apply(Flags, 1, prod))
     results <- matrix(nrow = length(Number_of_Radius), ncol = 3)
     for (i in 1:length(Number_of_Radius)) {
@@ -154,4 +155,26 @@ if (flash & n == 2) {
     write.table(x = results, file = "Docs/results.txt", quote = FALSE)
 }
 
+
+# Отрисовка результатов вычислений для спектра линейного оператора
+jpeg("Docs/complexPlot.jpg")
+plot(x = c(Re(lambs), Re(results["Center:"])), 
+     y = c(Im(lambs), Im(results["Center:"])),
+     xlim = c(Re(results["Center:"]) - Re(results["Radius:"]) - 1, Re(results["Center:"]) + Re(results["Radius:"]) + 1),
+     ylim = c(Im(results["Center:"]) - Re(results["Radius:"]) - 1, Im(results["Center:"]) + Re(results["Radius:"]) + 1),
+     main = "Спектр на комплексной плоскости линейного оператора")
+lines(x = Re(lambs), 
+      y = Im(lambs), 
+      type = "l")
+lines(x = c(Re(lambs[1]), Re(lambs[n])),
+      y = c(Im(lambs[1]), Im(lambs[n])))
+abline(h = 0, lty = 1)
+abline(v = 0, lty = 1)
+# Функция из библиотеки 'plotrix' для рисования окружности с центром и радиусом
+draw.circle(x = Re(results["Center:"]), y = Im(results["Center:"]), radius = Re(results["Radius:"]), border = "red")
+grid()
+dev.off()
+
+# Очистка памяти проекта
 rm(list = ls())
+
