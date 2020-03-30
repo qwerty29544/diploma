@@ -38,7 +38,7 @@ lines(x = c(Re(lambs[1]), Re(lambs[n])),
 abline(h = 0, lty = 1)
 abline(v = 0, lty = 1)
 # Функция из библиотеки 'plotrix' для рисования окружности с центром и радиусом
-draw.circle(x = Re(results["Center:"]), y = Im(results["Center:"]), radius = Re(results["Radius:"]), border = "red")
+draw.circle(x = Re(results["Center:"]), y = Im(results["Center:"]), radius = Re(results["Radius:"] -0.3), border = "red")
 grid()
 dev.off()
 

@@ -82,7 +82,7 @@ FlagsCalc <- function(mu, R, n, lambs) {
 
 # Считывание данных о точках многоугольника из текстового документа
 lambs <- read.table(file = "inputs/complexNumbeRS", header = T)[[1]]
-cat(lambs) # Вывод считанных данных в консоль как есть
+cat(lambs, "\n") # Вывод считанных данных в консоль как есть
 n <- length(lambs) # Переменная количества считанных данных
 
 # section of init z1, z2, z3 ----------------------------------------------
@@ -136,6 +136,7 @@ if (flash & n == 2) {
     results <- c(mu, R, sqrt(R^2 / abs(mu)^2))
     names(results) <- c("Center:", "Radius:", "Ro:")
     print(results)
+    cat("\n")
     write.table(x = results, file = "outputs/results.txt", quote = FALSE)
 } else if (flash & n > 2) {
     Number_of_Radius <- which(1 == apply(Flags, 1, prod))
@@ -148,6 +149,7 @@ if (flash & n == 2) {
     results <- results[Number_of_Radius, ]
     names(results) <- c("Center:", "Radius:", "Ro:")
     print(results)
+    cat("\n")
     write.table(x = results, file = "outputs/results.txt", quote = FALSE)
 } else {
     results <- "Center of Decart plot belongs to area of linear operator's spectre"
@@ -156,5 +158,5 @@ if (flash & n == 2) {
 
 
 # Очистка памяти проекта
-#rm(list = ls())
+rm(list = ls())
 
