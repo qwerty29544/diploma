@@ -84,6 +84,7 @@ M4 <- cbind(c(1, 0.1, -0.1),
             c(-0.1, 0.1, 1))
 f4 <- c(1.1, 1, 1)
 u4 <- c(0, 0, 0)
+lambs <- eigen(M4)$values
 
 GMSI.history(M4,f4,u4)
 Jacobi.history(M4,f4,u4)
@@ -92,10 +93,13 @@ rbenchmark::benchmark({
     result31 <- GMSI(M4, f4, u4, 10e-4)
 }, replications = 1000)
 rbenchmark::benchmark({
-    result32 <- MatrixMethod(M4, f4) 
+    result32 <- GDM(M4, f4, u4) 
 }, replications = 1000)
 rbenchmark::benchmark({
     result33 <- Jacobi(M4, f4, u4, 10e-4) 
+}, replications = 1000)
+rbenchmark::benchmark({
+    result34 <- Chebishev(M4, f4, u4, lambs, 10L,10e-4) 
 }, replications = 1000)
 
 
@@ -103,7 +107,7 @@ rbenchmark::benchmark({
 # Оператор 2х2
 M5 <- cbind(c(0.75, 0), c(-1, 0.8))
 f5 <- c(1, 1)
-u5 <- c(0, 0)
+u5 <- c(4.4, 1.57)
 
 rbenchmark::benchmark({
     result31 <- GMSI(M5, f5, u5, 10e-4)
@@ -117,11 +121,21 @@ rbenchmark::benchmark({
 rbenchmark::benchmark({
     result34 <- SIM(M5, f5, u5, 10e-4) 
 }, replications = 1000)
+rbenchmark::benchmark({
+    result35 <- IMRES(M5, f5, u5, 10e-4) 
+}, replications = 1000)
+rbenchmark::benchmark({
+    result36 <- GDM(M5, f5, u5, 10e-8) 
+}, replications = 1000)
 
 print(result31)
 print(result32)
 print(result33)
 print(result34)
+print(result35)
+print(result36)
+
+
 
 result31 <- GMSI.history(M5, f5, u5, 10e-4)
 result32 <- MatrixMethod(M5, f5) 
