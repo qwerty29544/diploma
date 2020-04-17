@@ -8,7 +8,7 @@
     else {
         xyasp <- graphics::par("pin")
         xycr <- base::diff(graphics::par("usr"))[c(1, 3)]
-        ymult <- xyasp[1]/xyasp[2] * xycr[2]/xycr[1]
+        ymult <- xyasp[1] / xyasp[2] * xycr[2] / xycr[1]
     }
     return(ymult)
 }
@@ -16,8 +16,11 @@
 
 # Функция отрисовки окружности --------------------------------------------
 
-.circle <- function(x, y, radius, nv = 100, border = NULL, 
-                   col = NA, lty = 1, density = NULL, angle = 45, lwd = 0.5) {
+.circle <- function(x, y, radius, 
+                    nv = 100, border = NULL, 
+                    col = NA, lty = 1, 
+                    density = NULL, angle = 45, 
+                    lwd = 0.5) {
     ymult <- .getYmult()
     angle.inc <- 2 * pi/nv
     angles <- base::seq(0, 2 * pi - angle.inc, by = angle.inc)
@@ -41,19 +44,19 @@
     stopifnot(is.complex(R) || is.numeric(R))
     dimA <- length(lambs)
     grDevices::jpeg(paste0(fileName,".jpg"), width = 1000, height = 1000)
-    plot(x = c(Re(lambs), Re(mu)), asp = 1,
+    plot(x = c(Re(lambs), Re(mu)), asp = 1, 
          y = c(Im(lambs), Im(mu)),
-         xlim = c(Re(mu) - Re(R), Re(mu) + Re(R)),
-         ylim = c(Im(mu) - Re(mu), Im(mu) + Re(mu)),
+         xlim = c(Re(mu) - Re(R), Re(mu) + Re(R)), 
+         ylim = c(Im(mu) - Re(mu), Im(mu) + Re(mu)), 
          main = "Спектр на комплексной плоскости линейного оператора",
          pch = 19,
          col = "black",
          cex = 1.5,
          cex.lab = 1.5,
          cex.main = 1.5)
-    lines(x = Re(lambs), 
-          y = Im(lambs), 
-           type = "l")
+    lines(x = Re(lambs),
+          y = Im(lambs),
+          type = "l")
     lines(x = c(Re(lambs[1]), Re(lambs[dimA])),
           y = c(Im(lambs[1]), Im(lambs[dimA])))
     abline(h = 0, lty = 1, lwd = 1.2)
